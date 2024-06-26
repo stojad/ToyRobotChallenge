@@ -1,0 +1,6 @@
+@ToyRobotChallenge.Service_HostAddress = http://localhost:5291
+
+GET {{ToyRobotChallenge.Service_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
