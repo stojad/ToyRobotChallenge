@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Mvc;
 using ToyRobotChallenge.Service.Models;
 
 namespace ToyRobotChallenge.Service.Controllers
@@ -15,7 +13,7 @@ namespace ToyRobotChallenge.Service.Controllers
         {
             _context = context;
             _configuration = configuration.GetSection(GridConfiguration.Key)?.Get<GridConfiguration>()
-                ?? throw new NullReferenceException("Failed to retrieve grid configuration");
+                ?? throw new NullReferenceException("Failed to retrieve grid configuration.");
 
             if (!_context.Robots.Any())
             {
@@ -26,30 +24,80 @@ namespace ToyRobotChallenge.Service.Controllers
 
         [HttpGet()]
         [Route("report")]
-        public Robot Report()
+        public IActionResult Report()
         {
-            return _context.Robots.Single();
+            var robot = _context.Robots.Single();
+
+            if (!robot.IsPlaced)
+                return BadRequest("You must place the robot in an initial position using place() before using this command.");
+
+            return Content(robot.Report());
+        }
+
+        [HttpPut()]
+        [Route("place")]
+        public IActionResult Place(int x, int y, Orientation facing)
+        {
+            if (x < 0 || x > _configuration.GridSizeX - 1)
+                return BadRequest($"Value of x co-ordinate must be between 0 and {_configuration.GridSizeX - 1}");
+
+            if (y < 0 || y > _configuration.GridSizeY - 1)
+                return BadRequest($"Value of y co-ordinate must be between 0 and {_configuration.GridSizeY - 1}");
+
+            _context.Robots.Single().Place(x, y, facing);
+            _context.SaveChanges();
+
+            return Ok();
         }
 
         [HttpPut()]
         [Route("move")]
-        public IActionResult Move(int x, int y, Orientation facing)
+        public IActionResult Move()
         {
-            try
-            {
-                if (x < 0 || x > _configuration.GridSizeX - 1)
-                    throw new InvalidOperationException($"Value of x co-ordinate must be between 0 and {_configuration.GridSizeX - 1}");
+            var robot = _context.Robots.Single();
 
-                if (y < 0 || y > _configuration.GridSizeY - 1)
-                    throw new InvalidOperationException($"Value of y co-ordinate must be between 0 and {_configuration.GridSizeY - 1}");
+            if (!robot.IsPlaced)
+                return BadRequest("You must place the robot in an initial position using place() before using this command.");
 
-                _context.Robots.Single().Move(x, y, facing);
-            }
-            catch(InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            if (
+                robot.Facing == Orientation.North && robot.PositionY == _configuration.GridSizeY - 1 ||
+                robot.Facing == Orientation.East && robot.PositionX == _configuration.GridSizeX - 1 ||
+                robot.Facing == Orientation.South && robot.PositionY == 0 ||
+                robot.Facing == Orientation.West && robot.PositionX == 0
+               )
+                return BadRequest($"Cannot move robot {robot.Facing} as its resultant position would be out of bounds.");
 
+            robot.Move();
+            _context.SaveChanges();
+
+            return Ok();
+        }
+
+        [HttpPut()]
+        [Route("left")]
+        public IActionResult Left()
+        {
+            var robot = _context.Robots.Single();
+
+            if (!robot.IsPlaced)
+                return BadRequest("You must place the robot in an initial position using place() before using this command.");
+
+            robot.Left();
+            _context.SaveChanges();
+
+            return Ok();
+        }
+
+        [HttpPut()]
+        [Route("right")]
+        public IActionResult Right()
+        {
+            var robot = _context.Robots.Single();
+
+            if (!robot.IsPlaced)
+                return BadRequest("You must place the robot in an initial position using place() before using this command.");
+
+            robot.Right();
             _context.SaveChanges();
 
             return Ok();

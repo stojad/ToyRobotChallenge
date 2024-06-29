@@ -7,17 +7,46 @@ namespace ToyRobotChallenge.Service.Models
         public int Id { get; set; }
         public int PositionX { get; private set; } = 0;
         public int PositionY { get; private set; } = 0;
-        public Orientation Orientation { get; set; } = Orientation.North;
+        public Orientation Facing { get; private set; } = Orientation.North;
+        public bool IsPlaced { get; private set; } = false;
 
-      
-        private readonly GridConfiguration _configuration;
+        public string Report() => $"{PositionX}, {PositionY}, {Facing.ToString().ToUpper()}";
 
-        public void Move(int x, int y, Orientation orientation)
+        public void Place(int x, int y, Orientation facing)
         {
             PositionX = x;
             PositionY = y;
-            Orientation = orientation;
+            Facing = facing;
+            IsPlaced = true;
         }
+
+        public void Move()
+        {
+            if (Facing == Orientation.North)
+                PositionY++;
+            else if (Facing == Orientation.East)
+                PositionX++;
+            else if (Facing == Orientation.South)
+                PositionY--;
+            else
+                PositionX--;
+        }
+
+        public void Left() => Facing = Facing switch
+        {
+            Orientation.North => Orientation.West,
+            Orientation.East => Orientation.North,
+            Orientation.South => Orientation.East,
+            Orientation.West => Orientation.South
+        };
+
+        public void Right() => Facing = Facing switch
+        {
+            Orientation.North => Orientation.East,
+            Orientation.East => Orientation.South,
+            Orientation.South => Orientation.West,
+            Orientation.West => Orientation.North
+        };
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]

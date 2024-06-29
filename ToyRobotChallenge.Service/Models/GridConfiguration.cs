@@ -4,7 +4,6 @@
     {
         public const string Key = "Grid";
         public int GridSizeX { get; set; }
-
         public int GridSizeY { get; set; }
     }
 }
