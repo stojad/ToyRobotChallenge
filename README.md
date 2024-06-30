@@ -7,6 +7,16 @@ The intention behind using a REST API as opposed to a simple CLI program is for 
 ## Dependencies
 The .NET 8.0 SDK is all that is required to build and run this solution. This solution was developed in a Windows environment, but the code can be built and run on Windows, MacOS and Linux environments. You can download the SDK [here](https://dotnet.microsoft.com/en-us/download).
 
+The following package dependencies are installed automatically using NuGet when the project is built:
+- `Microsoft.EntityFrameworkCore`: Object-relational mapper for persisting robot entity between API requests
+- `Microsoft.EntityFrameworkCore.InMemory`: In-memory implementation of Entity Framework to simplify evaluation of the solution without software/filesystem dependency
+- `Microsoft.NET.Test.Sdk`: Required build targets and properties for building unit tests for the solution
+- `Swashbuckle.AspNetCore`: Generic library for documenting APIs built on ASP.NET Core
+- `Swashbuckle.AspNetCore.Swagger`: Middleware to expose JSON endpoints for APIs built on ASP.NET Core
+- `Swashbuckle.AspNetCore.SwaggerUI`: Middleware to expose an embedded version of the SwaggerUI when the API service runs
+- `xunit`: Framework for implementing unit tests of the Robot domain model
+- `xunit.runner.visualstudio`: Bindings for Visual Studio unit test functionality for xUnit tests, allowing developers to run unit tests within the Visual Studio GUI
+
 ## Getting Started
 1. In order to run the service locally, open a terminal like PowerShell and navigate to the `ToyRobotChallenge.Service` subdirectory of the repository root and run the command `dotnet run`:
 ```
@@ -34,4 +44,22 @@ By default, the grid on which the robot can move is a 5x5 grid, but this can be 
   "GridSizeX": 5,
   "GridSizeY": 5
 }
+```
+
+## Tests
+The solution contains a suite of unit tests for the robot's domain logic in a separate project named `ToyRobotProject.Tests`. These tests use the xUnit test framework to validate that the commands issued to the robot behave as expected. Examples of positive and negative tests for all of the available commands are in the unit test class `RobotUnitTests`. To run the unit tests, change to the `ToyRobotProject.Tests` directory and run the command `dotnet test`:
+```
+PS C:\Users\David\source\repos\ToyRobotChallenge> cd .\ToyRobotChallenge.Tests\
+PS C:\Users\David\source\repos\ToyRobotChallenge\ToyRobotChallenge.Tests> dotnet test
+```
+Once the service and test projects are built, the `dotnet test` command will produce output indicating how many tests have run, and how many of the tests passed or failed:
+```
+Test run for C:\Users\David\source\repos\ToyRobotChallenge\ToyRobotChallenge.Tests\bin\Debug\net8.0\ToyRobotChallenge.Tests.dll (.NETCoreApp,Version=v8.0)
+Microsoft (R) Test Execution Command Line Tool Version 17.8.0 (x64)
+Copyright (c) Microsoft Corporation.  All rights reserved.
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    28, Skipped:     0, Total:    28, Duration: 34 ms - ToyRobotChallenge.Tests.dll (net8.0)
 ```
