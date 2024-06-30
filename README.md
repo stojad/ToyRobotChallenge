@@ -34,7 +34,7 @@ info: Microsoft.Hosting.Lifetime[0]
 info: Microsoft.Hosting.Lifetime[0]
       Content root path: C:\Users\David\source\repos\ToyRobotChallenge\ToyRobotChallenge.Service
 ```
-3. In any web browser, visit the path `/swagger` to the local listening URL (e.g. [http://localhost:5291/swagger](http://localhost:5291/swagger)) to access the Swagger UI.
+3. In any web browser, visit the path `/swagger` relative to the local listening URL (e.g. [http://localhost:5291/swagger](http://localhost:5291/swagger)) to access the Swagger UI.
 4. Expand any of the actions and use 'Try it out' to issue commands.
 
 ## Configuration
@@ -47,7 +47,7 @@ By default, the grid on which the robot can move is a 5x5 grid, but this can be 
 ```
 
 ## Tests
-The solution contains a suite of unit tests for the robot's domain logic in a separate project named `ToyRobotProject.Tests`. These tests use the xUnit test framework to validate that the commands issued to the robot behave as expected. Examples of positive and negative tests for all of the available commands are in the unit test class `RobotUnitTests`. To run the unit tests, change to the `ToyRobotProject.Tests` directory and run the command `dotnet test`:
+The solution contains a suite of unit tests for the robot's domain logic in a separate project named `ToyRobotChallenge.Tests`. These tests use the xUnit test framework to validate that the commands issued to the robot behave as expected. Examples of positive and negative tests for all of the available commands are in the unit test class `RobotUnitTests`. To run the unit tests, change to the `ToyRobotChallenge.Tests` directory and run the command `dotnet test`:
 ```
 PS C:\Users\David\source\repos\ToyRobotChallenge> cd .\ToyRobotChallenge.Tests\
 PS C:\Users\David\source\repos\ToyRobotChallenge\ToyRobotChallenge.Tests> dotnet test
