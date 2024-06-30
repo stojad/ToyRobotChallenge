@@ -26,27 +26,30 @@ namespace ToyRobotChallenge.Service.Controllers
         [Route("report")]
         public IActionResult Report()
         {
-            var robot = _context.Robots.Single();
-
-            if (!robot.IsPlaced)
-                return BadRequest("You must place the robot in an initial position using place() before using this command.");
-
-            return Content(robot.Report());
+            try
+            {
+                return Content(_context.Robots.Single().Report());
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut()]
         [Route("place")]
         public IActionResult Place(int x, int y, Orientation facing)
         {
-            if (x < 0 || x > _configuration.GridSizeX - 1)
-                return BadRequest($"Value of x co-ordinate must be between 0 and {_configuration.GridSizeX - 1}");
+            try
+            {
+                _context.Robots.Single().Place(_configuration, x, y, facing);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
-            if (y < 0 || y > _configuration.GridSizeY - 1)
-                return BadRequest($"Value of y co-ordinate must be between 0 and {_configuration.GridSizeY - 1}");
-
-            _context.Robots.Single().Place(x, y, facing);
             _context.SaveChanges();
-
             return Ok();
         }
 
@@ -54,22 +57,16 @@ namespace ToyRobotChallenge.Service.Controllers
         [Route("move")]
         public IActionResult Move()
         {
-            var robot = _context.Robots.Single();
+            try
+            {
+                _context.Robots.Single().Move(_configuration);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
-            if (!robot.IsPlaced)
-                return BadRequest("You must place the robot in an initial position using place() before using this command.");
-
-            if (
-                robot.Facing == Orientation.North && robot.PositionY == _configuration.GridSizeY - 1 ||
-                robot.Facing == Orientation.East && robot.PositionX == _configuration.GridSizeX - 1 ||
-                robot.Facing == Orientation.South && robot.PositionY == 0 ||
-                robot.Facing == Orientation.West && robot.PositionX == 0
-               )
-                return BadRequest($"Cannot move robot {robot.Facing} as its resultant position would be out of bounds.");
-
-            robot.Move();
             _context.SaveChanges();
-
             return Ok();
         }
 
@@ -77,14 +74,16 @@ namespace ToyRobotChallenge.Service.Controllers
         [Route("left")]
         public IActionResult Left()
         {
-            var robot = _context.Robots.Single();
+            try
+            {
+                _context.Robots.Single().Left();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
-            if (!robot.IsPlaced)
-                return BadRequest("You must place the robot in an initial position using place() before using this command.");
-
-            robot.Left();
             _context.SaveChanges();
-
             return Ok();
         }
 
@@ -92,14 +91,16 @@ namespace ToyRobotChallenge.Service.Controllers
         [Route("right")]
         public IActionResult Right()
         {
-            var robot = _context.Robots.Single();
+            try
+            {
+                _context.Robots.Single().Right();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
-            if (!robot.IsPlaced)
-                return BadRequest("You must place the robot in an initial position using place() before using this command.");
-
-            robot.Right();
             _context.SaveChanges();
-
             return Ok();
         }
     }
